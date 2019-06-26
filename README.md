@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/m-fr/cssyntax.svg?branch=master)](https://travis-ci.com/m-fr/cssyntax)
+[![Build Status](https://travis-ci.org/m-fr/cssyntax.svg?branch=master)](https://travis-ci.org/m-fr/cssyntax)
 
 # CSSyntax
 This is repository with C# syntax highlighter for TeX (OPmac).

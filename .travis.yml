@@ -3,7 +3,7 @@ language: c
 sudo: required
 before_install:
 - sudo apt-get update
-- sudo apt-get install -y texlive texlive-lang-czechslovak
+- sudo apt-get install -y texlive-full
 script:
 - pdfcsplain -interaction=nonstopmode doc-en.tex && pdfcsplain -interaction=nonstopmode doc-en.tex
 - pdfcsplain -interaction=nonstopmode doc-cz.tex && pdfcsplain -interaction=nonstopmode doc-cz.tex

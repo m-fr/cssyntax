@@ -5,7 +5,12 @@
 
 \def\priklad{\numberedpar A{Example}}
 \addto\tthook{\ttline=0}
-\def\hisyntaxX#1\egroup{#1\egroup\egroup}
+\def\hisyntaxX#1\egroup{\let\n=\relax \let\NLh=\relax \let\U=\relax
+\let\TABchar=\relax % for OPmac trick 0151
+\adef{ }{\n\ \n}\adef\^^M{\n\NLh\n}\edef\tmpb{#1\egroup}
+\replacestrings{\n\egroup}{\egroup}%
+\let\NLh=\par \def\n{}\def\U##1{\csname##1\endcsname}%
+\tentt\localcolor\tmpb\egroup}
 
 \title {C\# syntax highlight}
 \subtitle {\TeX (\OPmac)}

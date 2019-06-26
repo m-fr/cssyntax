@@ -1,0 +1,79 @@
+\input opmac
+
+% Style setting
+
+\let\SComment=\Green      % comments
+\let\SDocComment=\Grey    % documentation comments
+\let\SPreprocKW=\Magenta  % preprocessor directives
+\let\SPreprocVal=\Magenta % preprocessor directive values
+\let\SKeyword=\Blue       % keywords
+\let\SAttribute=\Cyan     % attributes
+\let\SLiteral=\Cyan       % literals
+\let\SString=\Red         % strings
+\let\SChar=\Red           % characters
+\let\SNumber=\Black       % numbers
+\let\SOper=\Black         % operators
+
+% Macro definition
+
+\def\hisyntax#1{\bgroup\def\ptthook{\csname hisyntax#1\endcsname}}
+\def\ghisyntax#1{\def\ptthook{\bgroup\csname hisyntax#1\endcsname}}
+
+\def\hisyntaxCS#1\egroup{\let\n=\relax \let\NLh=\relax \let\U=\relax
+   \let\TABchar=\relax % for OPmac trick 0151
+   \adef{ }{\n\ \n}\adef\^^M{\n\NLh\n}\edef\tmpb{#1\egroup}%
+   \replacestrings{\n\egroup}{\egroup}%
+   \replacestrings{/*}{\tmp}\def\tmp##1*/{\U{blockCommentCS}{##1}}\edef\tmpb{\tmpb}%
+   \replacestrings{///}{\tmp}\def\tmp##1\NLh{\U{docCommentCS}{##1}}\edef\tmpb{\tmpb}%
+   \replacestrings{//}{\tmp}\def\tmp##1\NLh{\U{rowCommentCS}{##1}}\edef\tmpb{\tmpb}%
+   \replacestrings{\n[}{\tmp}\def\tmp##1]{\U{attrCS}{##1}}\edef\tmpb{\tmpb}%
+   \edef\tmp{\noexpand\replacestrings{\string\"}{\n{\string\"}}}\tmp
+   \replacestrings{"}{\tmp}\def\tmp##1\tmp{\U{stringCS}{##1}}\edef\tmpb{\tmpb}%
+   \edef\tmp{\noexpand\replacestrings{\string\'}{\n{\string\'}}}\tmp
+   \replacestrings{'}{\tmp}\def\tmp##1\tmp{\U{charCS}{##1}}\edef\tmpb{\tmpb}%
+   \edef\tmp{\noexpand\replacestrings{\NLh\n\string##}{\NLh\noexpand\preprocCS}}\tmp
+   \doreplace{##1}{\n{\SOper##1}\n}\charsCS{}%
+   \doreplace{\n##1\n}{\kwCS{##1}}\keywordsCS{}%
+   \doreplace{\n##1\n}{\litCS{##1}}\literalsCS{}%
+   \doreplace{\n##1}{\numberCS##1}0123456789{}%
+   \let\NLh=\par \def\n{}\def\U##1{\csname##1\endcsname}%
+   \tentt\localcolor\tmpb\egroup}
+\def\doreplace#1#2{\def\do##1{\ifx^##1^\else \replacestrings{#1}{#2}\expandafter\do\fi}%
+   \expandafter\do}
+
+\def\blockCommentCS#1{{\SComment/*#1*/}}
+\def\rowCommentCS#1{{\SComment//#1}\NLh}
+\def\docCommentCS#1{\docCommentCSa#1\n^}
+\def\docCommentCSa#1^{\def\tmpb{#1}\replacestrings{<}{\tagXML}%
+   {\SDocComment///}{\SComment\tmpb}\NLh}
+\def\tagXML#1>{{\SDocComment<#1>}}
+\def\attrCS#1{\attrCSa#1\n^}
+\def\attrCSa#1^{\def\tmpb{#1}\replacestrings{"}{\attrStrCS}[{\SAttribute\tmpb}]}
+\def\attrStrCS#1\attrStrCS{{\def\ {\char32 }\SString"#1"}}
+\def\stringCS#1{{\def\ {\char32 }\SString"#1"}}
+\def\charCS#1{{\def\ {\char32 }\SChar'#1'}}
+\def\preprocCS#1\n#2\NLh{{{\SPreprocKW\##1}{\n\SPreprocVal#2\n}}\NLh}
+\def\numberCS#1\n{{\SNumber#1}}
+\edef\literalsCS{{false}{null}{true}}
+\def\litCS#1{{\SLiteral#1}}
+\edef\contextKwCS{{add}{alias}{ascending}{async}{await}%
+   {by}{descending}{dynamic}{equals}{from}{get}{global}%
+   {group}{into}{join}{let}{nameof}{on}{orderby}{partial}%
+   {remove}{select}{set}{value}{var}{when}{where}{yield}}
+   % contextual C# keywords
+\edef\keywordsCS{{abstract}{as}{base}{bool}{break}{byte}%
+   {case}{catch}{char}{checked}{class}{const}{continue}%
+   {decimal}{default}{delegate}{do}{double}{else}{enum}%
+   {event}{explicit}{extern}{finally}{fixed}{float}%
+   {for}{foreach}{goto}{if}{implicit}{in}{int}{interface}%
+   {internal}{is}{lock}{long}{namespace}{new}{object}%
+   {operator}{out}{override}{params}{private}{protected}%
+   {public}{readonly}{ref}{return}{sbyte}{sealed}{short}%
+   {sizeof}{stackalloc}{static}{string}{struct}{switch}%
+   {this}{throw}{try}{typeof}{uint}{ulong}{unchecked}%
+   {unsafe}{ushort}{using}{virtual}{void}{volatile}
+   {while}\contextKwCS{}} % C# Keywords
+\def\kwCS#1{{\SKeyword#1}}
+\edef\charsCS{()\string{\string}+-*/=[]<>,:;\percent\string&\string^|!?}
+
+\endinput

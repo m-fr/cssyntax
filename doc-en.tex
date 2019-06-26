@@ -1,0 +1,279 @@
+\input opmac
+\input cssyntax
+\input style
+\input opmac-bib
+
+\def\priklad{\numberedpar A{Example}}
+\addto\tthook{\ttline=0}
+\def\hisyntaxX#1\egroup{#1\egroup\egroup}
+
+\title {C\# syntax highlight}
+\subtitle {\TeX (\OPmac)}
+\author {Michal Franc}
+\date {May 2019}
+\worklanguage[EN]
+\makefront
+
+\chap Macro CSSyntax
+
+This is documentation of CSSyntax macro.
+The macro is C\# syntax highlighter for \TeX\ documents written with \OPmac\cite[opmac].
+The macro is based on \OPmac\ tricks\cite[opmact] 124 and 125.
+The work was made as part of semestral work for Typography and \TeX\ course at FIT CTU.
+
+\sec Usage
+
+You can paste whole macro into source document.
+If you don't want to do this, you can just include file "cssyntax.tex".
+That can be done using this command:
+\begtt
+\input cssyntax
+\endtt
+The "cssyntax.tex" file should be somewhere in \TeX\ search path to prevent build errors.
+
+After inclusion of the macro you can use "\hisyntax{CS}" or "\ghisyntax{CS}" before verbatim to use highlighter locally or globally.
+In source document the begin of the verbatim can look like this:
+\begtt
+\hisyntax{CS}
+\begtt
+string foo = "bar";
+...
+\endtt
+
+\sec Limitations
+
+If you are using special characters in other macro, there can occur problems during searching and replacing character groups.
+In that case these groups won't be highlighted correctly.
+Typical example are quotation marks used by "\activettchar" for inline verbatim.
+You can input highlighter before other macros to prevent this situation.
+
+\sec Further improvements
+
+The highlighter works correctly with almost every C\# code.
+Although there are few possible improvements to do.
+There can be improved for example these things:
+\begitems
+* variables and methods highlight;
+* contextual keywords highlight based on context;
+* string prefixes highlight;
+* variables highlight in interpolated strings.
+\enditems
+
+\chap C\# elements
+
+In this chapter we will talk about C\# language syntax and about highlighting of this syntax with CSSyntax.
+Syntax elements and usage examples are derived from C\# language reference guide\cite[csharp].
+
+\sec Comments
+
+There are both block and row comments in C\#.
+Row comments begin with two slashes "//" and they are active until end of the line.
+Block comments are surrounded by "/*" and "*/".
+The macro also supports documentation comments.
+These comments begin with three slashes "///" and they include xml tags.
+
+\ghisyntax{CS}
+\begtt
+int x;  // This is row comment
+
+/* This is block comment */
+\endtt
+\priklad Comments in C\#
+
+\sec Keywords
+
+Keywords are identifiers reserved by the language. In C\# are keywords like this:
+\begtt
+class      continue   explicit   foreach    typeof
+\endtt
+
+C\# also defines contextual keywords.
+These words have special meaning only in given context but they are not reserved by the language.
+In C\# there are for example these contextual keywords:
+\begtt
+alias      dynamic    group      select     yield
+\endtt
+
+Both types of keywords are currently highlighted the same way.
+This causes highlight of contextual keywords even if the keyword is out of context.
+
+You can find complete list of keywords in appendix~\ref[keywords].
+
+\sec Literals
+
+In common sense, literal is anything that means some particular value.
+The macro highlights few different groups of literals such as strings, numbers etc.
+These literals do not have own group:
+
+\begtt
+true       false      null
+\endtt
+
+These literals are keywords at the same time. According this fact they are highlighted in a similar way.
+
+\secc Strings
+
+Strings are enclosed by quotation marks.
+Strings can also be prefixed with "@" for verbatim and with "$" for string interpolation.
+These prefixes aren't currently highlighted.
+
+\begtt
+string s1 = "hello \t world";
+string s2 = @"hello \t world";
+string s3 = $" He said: \"{s1}\"";
+string s3 = $@" He said: ""{s1}""";
+\endtt
+\priklad Strings
+
+\secc Characters
+
+Strings are enclosed by single quotation marks.
+The literal itself can be one character or an escape sequence.
+
+\begtt
+char[] vowels = {'a', 'e', 'i', 'o', 'u'};
+char[] newline = {'\r', '\n', '\u0085', '\u2028)', '\u2029'};
+\endtt
+\priklad Characters
+
+\secc Numbers
+
+C\# basically supports integers and decimal point numbers.
+Integers can be written in decimal or hexadecimal format.
+It is possible to append type suffix to them.
+Decimal point numbers have this format:
+
+"<whole part>.<decimal part>e<exponent><suffix>".
+
+\begtt
+    10         13ul         -15L       0xff         0x56u
+    1f         1.5d        1e10m    123.456        12.86M
+\endtt
+\priklad Numbers
+
+\sec Preprocessor directives
+
+Preprocessor directives consist from command and typically one parameter.
+There are also directives with more parameters or without any parameter.
+The directive can look like this:
+
+"#<directive command> <directive value>".
+
+\begtt
+#if DEBUG
+#warning DEBUG mode active
+#endif
+\endtt
+\priklad Preprocessor directives
+
+\sec Attributes
+Attributes enables programmers to invent new kinds of declarative information.
+Programmers can then attach attributes to various program entities, and retrieve attribute information in a run-time environment.
+Attributes are enclosed by square brackets.
+
+\begtt
+// Attribute class definition
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class AuthorAttribute: Attribute
+{ ... }
+
+// Attribute class usage
+[Author("Brian Kernighan"), Author("Dennis Ritchie")]
+class Class1
+{ ... }
+\endtt
+\priklad Attributes in C\#
+
+\sec Operator
+
+The macro also supports highlighting of operators, separators etc.
+But these characters aren't highlighted by default.
+To highlight them you can just change highlight color for this group.
+
+\chap Highlight style
+
+Each group has its own highlight style.
+These styles have naming convention in "S<Element>" format.
+Default style inspired by documentation style sets values as follows:
+\midinsert
+\hisyntax{X}
+\begtt
+\let\SComment=\Green      % comments
+\let\SDocComment=\Grey    % documentation comments
+\let\SPreprocKW=\Magenta  % preprocessor directives
+\let\SPreprocVal=\Magenta % preprocessor directive values
+\let\SKeyword=\Blue       % keywords
+\let\SAttribute=\Cyan     % attributes
+\let\SLiteral=\Cyan       % literals
+\let\SString=\Red         % strings
+\let\SChar=\Red           % characters
+\let\SNumber=\Black       % numbers
+\let\SOper=\Black         % operators
+\endtt
+\priklad Default style
+\endinsert
+
+\bibchap
+\usebib/c (simple) mybase
+
+\label[keywords]
+\app Keywords
+
+You can see full list of keywords in C\# 8.0 language in this appendix.
+
+\begtt
+// Keywords
+abstract     as           base         bool         break
+byte         case         catch        char         checked
+class        const        continue     decimal      default
+delegate     do           double       else         enum
+event        explicit     extern       false        finally
+fixed        float        for          foreach      goto
+if           implicit     in           int          interface
+internal     is           lock         long         namespace
+new          null         object       operator     out
+override     params       private      protected    public
+readonly     ref          return       sbyte        sealed
+short        sizeof       stackalloc   static       string
+struct       switch       this         throw        true
+try          typeof       uint         ulong        unchecked
+unsafe       ushort       using        virtual      void
+volatile     while
+
+// Contextual keywords
+add          alias        ascending    async        await
+by           descending   dynamic      equals       from
+get          global       group        into         join
+let          nameof       on           orderby      partial
+remove       select       set          value        var
+when         where        yield
+\endtt
+
+\app Highlight examples
+
+\sec Documentation comments
+
+\ttline=0
+\begtt
+/// <summary>This method changes the point's location by
+///    the given x- and y-offsets.
+/// <example>For example:
+/// <code>
+///    Point p = new Point(3,5);
+///    p.Translate(-1,3);
+/// </code>
+/// results in <c>p</c>'s having the value (2,8).
+/// </example>
+/// </summary>
+
+public void Translate(int xor, int yor) {
+    X += xor;
+    Y += yor;
+}
+\endtt
+
+\sec Hello World
+
+\verbinput (-) hello.cs
+
+\bye

@@ -1,0 +1,18 @@
+os: linux
+language: c
+sudo: required
+before_install:
+- sudo apt-get update
+- sudo apt-get install -y texlive texlive-lang-czechslovak
+script:
+- pdfcsplain -interaction=nonstopmode doc-en.tex && pdfcsplain -interaction=nonstopmode doc-en.tex
+- pdfcsplain -interaction=nonstopmode doc-cz.tex && pdfcsplain -interaction=nonstopmode doc-cz.tex
+deploy:
+  provider: releases
+  api_key:
+    secure: aJxVItfFBbY4+8DWqr/ywDfWRl+BL/pe01CZmziye7i9Cfukb/v7TABragqghWJzMiapr0/sjZRlVYbeqZXxSs67AvrRPi7mr5iaIYgGbtahA9/BzpFVImFmfqgCvwZ4hjEw/9pz0Uwn7t+7ntu9nl7nwZmRlRQ/mNZ/aerdeHQjy+bO2EAEX8v7FbpbAyuuAg55WI1+KRiyRJFbb3cGEJWfMRIvGv/GBMWUnJNqnDIwM3dLJlYggZM+v/8OMXPO/cLjwqdBZtJGeu/fiq8Zi8C33IqxHPGRBgeog+gkn56XiKzvEG6txrLaWCsl2bLtiL4c+yWXlyYn4pOMEFHbIU8ijhRZ+HWD4YaIlT3wMfWZCfjn1XUI9fZaYT4NcIIwlsyiCB/UHVHwK7/su6HnmEP0c39QpbsxGqW22wbpD85GERKeJmOkekAc9Uc7vQ+Xlc63UjpkjbVD33iEot35PE2cC0KDmPWPw8x2GDNChxbnBVTZFEpdawTUSe8SPQP5piZRltLvbZ+4Gc/tYD1PmAO8ldGClwq7Rs5v6ft2htumNBd+hIkHMgH/6OIWbu/hxaa9ThNXfYdbCt7xD8o0UfpYYvsqD/78cyqDX66WMaWCKh+x+g4qbFJfBEVKUrxIRfVBdzEPICMQYgvTWAz2YSCHIHdmNBhME5DqtPR7k7s=
+  file:
+  - doc-en.pdf
+  - doc-cz.pdf
+  on:
+    repo: m-fr/cssyntax

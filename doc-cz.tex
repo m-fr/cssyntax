@@ -1,0 +1,277 @@
+\input opmac
+\input cssyntax
+\input style
+\input opmac-bib
+
+\def\priklad{\numberedpar A{Příklad}}
+\addto\tthook{\ttline=0}
+\def\hisyntaxX#1\egroup{#1\egroup\egroup}
+
+\title {Zvýraznění syntaxe C\#}
+\subtitle {\TeX (\OPmac)}
+\author {Michal Franc}
+\date {Květen 2019}
+\worklanguage[CZ]
+\makefront
+
+\chap Makro CSSyntax
+
+Toto je referenční dokument k~makru CSSyntax.
+Makro slouží k~zvýraznění syntaxe jazyka C\# v~\TeX ových dokumentech používajících \OPmac\cite[opmac] a vychází z~\OPmac\ triků\cite[opmact] 124 a 125.
+Toto makro vzniklo v~rámci semestrální práce v~předmětu Typografie a \TeX\ na FIT ČVUT.
+
+\sec Zavedení makra
+
+Celé makro lze vložit přímo do dokumentu.
+Pokud nechcete vkládat makro přímo do dokumentu, můžete připojit soubor "cssyntax.tex".
+Toho docílíte pomocí tohoto příkazu:
+\begtt
+\input cssyntax
+\endtt
+Aby připojení makra proběhlo hladce, je samozřejmě nutné umístit "cssyntax.tex" do některého z~adresářů prohledávaných při sestavování dokumentu.
+
+Po připojení makra lze před verbatim prostředí přidat "\hisyntax{CS}" nebo "\ghisyntax{CS}" pro lokální nebo globální nastavení obarvení.
+Začátek verbatim prostředí může ve zdrojovém textu vypadat například takto:
+\begtt
+\hisyntax{CS}
+\begtt
+string foo = "bar";
+...
+\endtt
+
+\sec Omezení makra
+
+Pokud jsou některé speciální znaky použity v~jiném makru, můžou vzniknout potíže při vyhledávání a nahrazování skupin znaků.
+Tyto skupiny se v~takovém případě neobarví korektně.
+Nejčastěji se tak stává u~uvozovek používaných v~příkazu "\activettchar" pro nastavení řádkového verbatim prostředí.
+Tomu lze snadno zabránit předřazením makra pro obarvování syntaxe před ostatními makry.
+
+\sec Další zlepšení
+
+Makro vyhovujícím způsobem obarví téměř libovolný kód.
+Avšak stále skýtá prostor pro další zlepšení.
+Přidat lze například tyto věci:
+\begitems
+* obarvení proměnných a metod;
+* obarvení kontextuálních slov na základě kontextu;
+* obarvení prefixů pro řetězce;
+* obarvení proměnných v~interpolovaných řetězcích.
+\enditems
+
+\chap Elementy jazyka C\#
+
+V~této kapitole je probírána syntaxe jazyka C\# a její zvýraznění pomocí makra CSSyntax.
+Syntaktické elementy a příklady jejich použití jsou čerpány z~referenční příručky jazyka\cite[csharp].
+
+\sec Komentáře
+
+C\# podporuje blokové i řádkové komentáře.
+Řádkové komentáře jsou uvozeny pomocí dvou lomítek "//" a pokračují až do konce řádku.
+Blokové komentáře jsou uzavřeny mezi "/*" a "*/".
+Makro také podporuje obarvení dokumentačních komentářů.
+Ty jsou uvozeny pomocí tří lomítek "///" a obsahují xml tagy.
+
+\ghisyntax{CS}
+\begtt
+int x;  // Toto je řádkový komentář
+
+/* Toto je blokový komentář */
+\endtt
+\priklad Komentáře v~C\#
+
+\sec Klíčová slova
+
+Klíčová slova jsou vyhrazené identifikátory mající speciální význam v~rámci jazyka, například:
+\begtt
+class      continue   explicit   foreach    typeof
+\endtt
+
+C\# dále definuje kontextuální klíčová slova.
+Tato slova mají speciální význam v~určitém kontextu, ale nejsou rezervovanými slovy jazyka.
+Mezi kontextuální slova se mimo jiné řadí:
+\begtt
+alias      dynamic    group      select     yield
+\endtt
+
+V~současné verzi jsou kontextuální i klíčová slova zpracovávána stejným způsobem.
+To způsobí obarvení kontextuálního klíčového slova i mimo kontext, tedy v~momentě, kdy není považováno za klíčové.
+
+Celý seznam klíčových slov je v~příloze~\ref[keywords].
+
+\sec Literály
+
+Mezi literály lze obecně zařadit vše, co označuje konkrétní hodnotu.
+Pro účely zvýraznění se tato skupina dále dělí na řetězce, čísla atd.
+Následující literály zůstanou bez zařazení do podskupin:
+
+\begtt
+true       false      null
+\endtt
+
+Tyto literály jsou zároveň klíčovými slovy, a proto jsou zpracovávány podobným způsobem.
+
+\secc Řetězce
+
+Řetězce jsou uzavřeny mezi dvojici uvozovek.
+Jazyk dále definuje prefixy "@" pro verbatim prostředí a "$" pro interpolaci řetězců.
+Prefixy momentálně nepodléhají obarvení.
+
+\begtt
+string s1 = "hello \t world";
+string s2 = @"hello \t world";
+string s3 = $" He said: \"{s1}\"";
+string s3 = $@" He said: ""{s1}""";
+\endtt
+\priklad Řetězce
+
+\secc Znaky
+
+Znakové literály se uvozují pomocí dvojice jednoduchých uvozovek.
+Samotný literál může být jeden znak nebo escape sekvence.
+
+\begtt
+char[] vowels = {'a', 'e', 'i', 'o', 'u'};
+char[] newline = {'\r', '\n', '\u0085', '\u2028)', '\u2029'};
+\endtt
+\priklad Znaky
+
+\secc Čísla
+
+V~C\# se vyskytují celá a desetinná čísla.
+Celá čísla můžeme zapsat v~desítkové nebo hexadecimální soustavě a případně k~nim připojit suffix určující přesný typ.
+V~případně desetinných čísel se literály zapisují ve tvaru:
+
+"<celá část>.<desetinná část>e<exponent><suffix>".
+
+\begtt
+    10         13ul         -15L       0xff         0x56u
+    1f         1.5d        1e10m    123.456        12.86M
+\endtt
+\priklad Numerické literály
+
+\sec Direktivy preprocesoru
+
+Direktivy preprocesoru jsou složeny z~příkazu a většinou jedné hodnoty.
+Některé direktivy mají hodnot více, jiné nemají žádnou.
+Zápis direktivy vypadá následovně:
+
+"#<direktiva> <hodnota direktivy>".
+
+\begtt
+#if DEBUG
+#warning DEBUG mode active
+#endif
+\endtt
+\priklad Direktivy procesoru
+
+\sec Atributy
+
+Atributy umožňují programátorovi přidat k~různým entitám programu další informace.
+K~těmto informacím je možné přistupovat za běhu programu.
+Atributy se uvádějí uvnitř hranatých závorek.
+
+\begtt
+// Attribute class definition
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class AuthorAttribute: Attribute
+{ ... }
+
+// Attribute class usage
+[Author("Brian Kernighan"), Author("Dennis Ritchie")]
+class Class1
+{ ... }
+\endtt
+\priklad Atributy v~C\#
+
+\sec Operátory
+
+Makro také dokáže obarvit operátory, oddělovače a další speciální znaky jazyka.
+Ve výchozím stavu jsou však obarvovány černě, takže zdánlivě zůstávají stejné.
+
+\chap Styl zvýraznění
+
+Každá skupina konstrukcí jazyka má vlastní způsob zvýraznění.
+Pro snadné rozpoznání jsou styly pojmenovány "S<Element>".
+Výchozí styl, který je částečně inspirován stylem použitém v~dokumentaci jazyka, je nastaven takto:
+\midinsert
+\hisyntax{X}
+\begtt
+\let\SComment=\Green      % comments
+\let\SDocComment=\Grey    % documentation comments
+\let\SPreprocKW=\Magenta  % preprocessor directives
+\let\SPreprocVal=\Magenta % preprocessor directive values
+\let\SKeyword=\Blue       % keywords
+\let\SAttribute=\Cyan     % attributes
+\let\SLiteral=\Cyan       % literals
+\let\SString=\Red         % strings
+\let\SChar=\Red           % characters
+\let\SNumber=\Black       % numbers
+\let\SOper=\Black         % operators
+\endtt
+\priklad Výchozí nastavení barev
+\endinsert
+
+\bibchap
+\usebib/c (simple) mybase
+
+\label[keywords]
+\app Klíčová slova
+
+Zde naleznete přehled všech klíčových slov jazyka C\# 8.0.
+
+\begtt
+// Klíčová slova
+abstract     as           base         bool         break
+byte         case         catch        char         checked
+class        const        continue     decimal      default
+delegate     do           double       else         enum
+event        explicit     extern       false        finally
+fixed        float        for          foreach      goto
+if           implicit     in           int          interface
+internal     is           lock         long         namespace
+new          null         object       operator     out
+override     params       private      protected    public
+readonly     ref          return       sbyte        sealed
+short        sizeof       stackalloc   static       string
+struct       switch       this         throw        true
+try          typeof       uint         ulong        unchecked
+unsafe       ushort       using        virtual      void
+volatile     while
+
+// Kontextuální klíčová slova
+add          alias        ascending    async        await
+by           descending   dynamic      equals       from
+get          global       group        into         join
+let          nameof       on           orderby      partial
+remove       select       set          value        var
+when         where        yield
+\endtt
+
+\app Ukázky obarvení kódu
+
+\sec Dokumentační komentáře
+
+\ttline=0
+\begtt
+/// <summary>This method changes the point's location by
+///    the given x- and y-offsets.
+/// <example>For example:
+/// <code>
+///    Point p = new Point(3,5);
+///    p.Translate(-1,3);
+/// </code>
+/// results in <c>p</c>'s having the value (2,8).
+/// </example>
+/// </summary>
+
+public void Translate(int xor, int yor) {
+    X += xor;
+    Y += yor;
+}
+\endtt
+
+\sec Hello World
+
+\verbinput (-) hello.cs
+
+\bye

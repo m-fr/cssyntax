@@ -14,5 +14,6 @@ deploy:
   file:
   - doc-en.pdf
   - doc-cz.pdf
+  skip_cleanup: true
   on:
     repo: m-fr/cssyntax

@@ -1,0 +1,3 @@
+[submodule "mfrdoc"]
+	path = mfrdoc
+	url = https://github.com/m-fr/mfrdoc.git
